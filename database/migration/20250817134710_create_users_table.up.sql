@@ -3,6 +3,7 @@ CREATE TABLE users(
                       first_name varchar(255) NOT NULL,
                       last_name varchar(255) NULL,
                       email varchar(255) UNIQUE,
+                      password varchar(255),
                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                       PRIMARY KEY (id)
