@@ -1,10 +1,10 @@
 package management
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"iqbalatma/go-iqbalatma/app/model"
 	"iqbalatma/go-iqbalatma/app/repository"
+	exception "iqbalatma/go-iqbalatma/error"
 )
 
 type UserService struct {
@@ -17,9 +17,8 @@ func NewUserService() *UserService {
 	}
 }
 
-func (service *UserService) GetAllData(c *gin.Context) ([]model.User, error) {
-	fmt.Println("GET ALL DATA")
-	data, err := service.UserRepository.GetAllData(c)
+func (service *UserService) GetAllData() (*[]model.User, error) {
+	data, err := service.UserRepository.GetAllData()
 	if err != nil {
 		return nil, err
 	}
@@ -27,8 +26,18 @@ func (service *UserService) GetAllData(c *gin.Context) ([]model.User, error) {
 	return data, nil
 }
 
-func (service *UserService) GetDataById(c *gin.Context, id string) {
+func (service *UserService) GetDataById(id string) (*model.User, error) {
+	data, err := service.UserRepository.GetDataById(id)
 
+	something := false
+	if something {
+		return nil, exception.InvalidAction()
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
 
 func (service *UserService) UpdateDataById(c *gin.Context, id string) {

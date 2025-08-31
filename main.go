@@ -14,6 +14,7 @@ import (
 func main() {
 	config.LoadEnv()
 	config.ConnectDB()
+	config.LoadLogger()
 
 	if len(os.Args) < 2 {
 		runServer()
@@ -29,9 +30,11 @@ func main() {
 }
 
 func runServer() {
-	fmt.Println("Running server")
+
 	router := gin.Default()
-	router.Use(middleware.ErrorHandler())
+	router.
+		Use(middleware.ErrorHandler()).
+		Use(middleware.RequestIDMiddleware())
 	route.RegisterRoute(router)
 
 	err := router.Run(":" + config.AppConfig.AppPort)

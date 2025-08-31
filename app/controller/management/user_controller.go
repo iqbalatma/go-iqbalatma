@@ -3,23 +3,19 @@ package management
 import (
 	"github.com/gin-gonic/gin"
 	"iqbalatma/go-iqbalatma/app/service/management"
-	exception "iqbalatma/go-iqbalatma/error"
+	"iqbalatma/go-iqbalatma/config"
 	"net/http"
 )
 
 type UserController struct {
+	UserService *management.UserService
 }
 
 func (ctrl *UserController) Index(c *gin.Context) {
-	somethingWentWrong := true
-
-	if somethingWentWrong {
-		c.Error(exception.InvalidAction())
-		return
-	}
-
+	config.AppLogger.WithField("Nama", "IQBAL")
+	config.AppLogger.Info("UserController.Index")
 	service := management.NewUserService()
-	data, err := service.GetAllData(c)
+	data, err := service.GetAllData()
 
 	if err != nil {
 		return
@@ -31,7 +27,17 @@ func (ctrl *UserController) Index(c *gin.Context) {
 }
 
 func (ctrl *UserController) Show(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"message": "pong"})
+	service := management.NewUserService()
+	data, err := service.GetDataById(c.Param("id"))
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "success",
+		"data":    data,
+	})
 }
 
 func (ctrl *UserController) Store(c *gin.Context) {
@@ -47,5 +53,7 @@ func (ctrl *UserController) Destroy(c *gin.Context) {
 }
 
 func NewUserController() *UserController {
-	return &UserController{}
+	return &UserController{
+		UserService: management.NewUserService(),
+	}
 }
