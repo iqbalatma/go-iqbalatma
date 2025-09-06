@@ -3,6 +3,9 @@ ifneq (,$(wildcard .env))
     export $(shell sed 's/=.*//' .env)
 endif
 
+dev:
+	air -c .air.toml
+
 serve:
 	go run main.go
 

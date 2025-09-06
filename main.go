@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/cmd"
 	"iqbalatma/go-iqbalatma/config"
 	"iqbalatma/go-iqbalatma/middleware"
 	"iqbalatma/go-iqbalatma/route"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -31,8 +32,9 @@ func main() {
 
 func runServer() {
 
-	router := gin.Default()
+	router := gin.New()
 	router.
+		Use(middleware.RequestLatencyMiddleware()).
 		Use(middleware.ErrorHandler()).
 		Use(middleware.RequestIDMiddleware())
 	route.RegisterRoute(router)

@@ -2,17 +2,18 @@ package seeder
 
 import (
 	"fmt"
-	"github.com/jaswdr/faker"
 	"iqbalatma/go-iqbalatma/app/model"
 	"iqbalatma/go-iqbalatma/config"
 	"iqbalatma/go-iqbalatma/utils"
+
+	"github.com/jaswdr/faker"
 )
 
 func UserSeeder() {
 	fmt.Println("Seed User")
 
 	fake := faker.New()
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1000; i++ {
 		hashedPassword, _ := utils.MakeHash(fake.Internet().Password())
 		user := model.User{
 			FirstName: fake.Person().FirstName(),

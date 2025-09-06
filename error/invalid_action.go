@@ -18,3 +18,11 @@ func InvalidAction(opts ...HTTPErrorOption) *HTTPError {
 
 	return err
 }
+
+func QuotaExceedException() *HTTPError {
+	return NewHttpError(
+		enum.ERR_INSUFFICIENT_QUOTA,
+		"Quota has been exceeded",
+		http.StatusTooManyRequests,
+	)
+}

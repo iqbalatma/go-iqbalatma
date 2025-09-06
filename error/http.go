@@ -8,24 +8,6 @@ import (
 
 type HTTPErrorOption func(*HTTPError)
 
-func WithMessage(message string) HTTPErrorOption {
-	return func(e *HTTPError) {
-		e.Message = message
-	}
-}
-
-func WithStatusCode(statusCode int) HTTPErrorOption {
-	return func(e *HTTPError) {
-		e.StatusCode = statusCode
-	}
-}
-
-func WithCode(code enum.ResponseCode) HTTPErrorOption {
-	return func(e *HTTPError) {
-		e.Code = code
-	}
-}
-
 type HTTPError struct {
 	Message    string            `json:"message"`
 	Code       enum.ResponseCode `json:"code"`
@@ -34,13 +16,19 @@ type HTTPError struct {
 }
 
 func (e HTTPError) Error() string {
-	return fmt.Sprintf("Message: %s,  Code: %s, Status Code: %d", e.Message, e.Code, e.StatusCode)
+	return fmt.Sprintf(
+		"Message: %s,  Code: %s, Status Code: %d, Timestamp: %s",
+		e.Message,
+		e.Code,
+		e.StatusCode,
+		e.Timestamp,
+	)
 }
 
 func NewHttpError(code enum.ResponseCode, message string, statusCode int) *HTTPError {
 	return &HTTPError{
-		Message:    message,
 		Code:       code,
+		Message:    message,
 		StatusCode: statusCode,
 		Timestamp:  time.Now(),
 	}
