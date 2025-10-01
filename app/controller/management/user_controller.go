@@ -24,7 +24,7 @@ func (ctrl *UserController) Index(c *gin.Context) error {
 		return err
 	}
 
-	c.JSON(http.StatusOK, utils.HTTPResponse{
+	c.JSON(http.StatusOK, &utils.HTTPResponse{
 		Message:   "Get all data user successfully",
 		Timestamp: time.Now(),
 		Code:      enum.SUCCESS,

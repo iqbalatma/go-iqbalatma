@@ -26,3 +26,8 @@ type PaginationMeta struct {
 	PerPage     int    `json:"per_page"`
 	Total       int64  `json:"total"`
 }
+
+type ResponseOption struct {
+	HTTPStatusCode int
+	Code           enum.ResponseCode
+}

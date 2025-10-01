@@ -3,7 +3,7 @@ package model
 import "github.com/google/uuid"
 
 type BaseUUID struct {
-	ID uuid.UUID `json:"id"`
+	ID uuid.UUID `json:"id" gorm:"column:id;primary_key;type:uuid;"`
 }
 
 func (b *BaseUUID) GenerateUUID() {

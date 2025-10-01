@@ -13,7 +13,7 @@ func UserSeeder() {
 	fmt.Println("Seed User")
 
 	fake := faker.New()
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 		hashedPassword, _ := utils.MakeHash(fake.Internet().Password())
 		user := model.User{
 			FirstName: fake.Person().FirstName(),

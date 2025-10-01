@@ -1,13 +1,16 @@
 package utils
 
 import (
-	"fmt"
+	exception "iqbalatma/go-iqbalatma/error"
 	"math"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
+
+var MaximumPerPage int = 100
+var DefaultPerPage int = 10
 
 func Paginate[T any](c *gin.Context, db *gorm.DB, out *[]T) (*PaginationMeta, error) {
 	pageStr := c.DefaultQuery("page", "1")
@@ -19,14 +22,17 @@ func Paginate[T any](c *gin.Context, db *gorm.DB, out *[]T) (*PaginationMeta, er
 		page = 1
 	}
 	if perPage < 1 {
-		perPage = 10
+		perPage = DefaultPerPage
 	}
+
+	if perPage > MaximumPerPage {
+		return nil, exception.QueryParameterInvalid("Your per_page is exceed. Maximum per_page is 100")
+	}
+
 	var total int64
 	db.Model(out).Count(&total)
 
 	offset := (page - 1) * perPage
-	fmt.Println("total", total)
-	fmt.Println("offset", offset)
 	if err := db.Offset(offset).Limit(perPage).Find(out).Error; err != nil {
 		return nil, err
 	}
@@ -38,9 +44,6 @@ func Paginate[T any](c *gin.Context, db *gorm.DB, out *[]T) (*PaginationMeta, er
 		from = 0
 		to = 0
 	}
-
-	fmt.Println("total", total)
-	fmt.Print("page: ", page, " perPage: ", perPage, " \n")
 
 	return &PaginationMeta{
 		CurrentPage: page,
