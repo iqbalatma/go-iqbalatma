@@ -15,23 +15,32 @@ func getDefaultPayload() *Payload {
 		EXP:  time.Now().Unix(),
 		NBF:  time.Now().Unix(),
 		JTI:  uuid.New().String(),
-		SUB:  "sub",
-		IUA:  "iqbalatma-go-jwt-authentication",
+		SUB:  "",
+		IUA:  "",
 		IUC:  true,
 		TYPE: ACCESS_TOKEN,
 	}
 }
 
-func Encode() (string, error) {
+func Encode(subject JWTSubject[any], tokenType TokenType) (string, error) {
 	key := []byte(Config.JWTSecretKey)
 
 	payload := getDefaultPayload()
-	payload.SUB = "IQBALATMA"
-	payload.EXP = payload.EXP + 1000
+	payload.TYPE = tokenType
+	payload.SUB = subject.GetSubjectKey()
+	addTTL(payload)
 
 	token := jwt.NewWithClaims(GetSigningMethod(),
 		payload.ToMapClaims(),
 	)
 
 	return token.SignedString(key)
+}
+
+func addTTL(payload *Payload) {
+	if payload.TYPE == ACCESS_TOKEN {
+		payload.EXP = time.Now().Add(time.Duration(GetAccessTTL()) * time.Minute).Unix()
+	} else {
+		payload.EXP = time.Now().Add(time.Duration(GetRefreshTTL()) * time.Minute).Unix()
+	}
 }
