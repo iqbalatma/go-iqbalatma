@@ -32,3 +32,14 @@ func (repository *UserRepository) GetAllPaginated(c *gin.Context) (*utils.Payloa
 		Meta: paginate,
 	}, nil
 }
+
+func (repository *UserRepository) GetByEmail(c *gin.Context, email string) (*model.User, error) {
+	var user model.User
+
+	result := config.DB.Where("email = ?", email).First(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &user, nil
+}

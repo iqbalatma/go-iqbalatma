@@ -4,7 +4,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func Decoding(jwtString string) (*Payload, error) {
+func Decode(jwtString string) (*Payload, error) {
 	key := []byte(Config.JWTSecretKey)
 	payload := &Payload{}
 

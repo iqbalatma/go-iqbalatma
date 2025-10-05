@@ -17,8 +17,7 @@ type UserController struct {
 }
 
 func (ctrl *UserController) Index(c *gin.Context) error {
-	service := management.NewUserService()
-	payload, err := service.GetAllPaginated(c)
+	payload, err := ctrl.UserService.GetAllPaginated(c)
 
 	if err != nil {
 		return err

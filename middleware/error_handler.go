@@ -5,6 +5,7 @@ import (
 	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/config"
 	exception "iqbalatma/go-iqbalatma/error"
+	"iqbalatma/go-iqbalatma/utils"
 	"net/http"
 	"time"
 
@@ -27,26 +28,33 @@ func ErrorHandler() gin.HandlerFunc {
 			}).Error(originalErr)
 			var httpError *exception.HTTPError
 			if errors.As(originalErr, &httpError) {
-				c.AbortWithStatusJSON(httpError.StatusCode, exception.HTTPError{
-					Code:      httpError.Code,
+				c.AbortWithStatusJSON(httpError.StatusCode, exception.NewHttpError(
+					httpError.Code,
+					httpError.Message,
+					httpError.StatusCode,
+				))
+
+				c.AbortWithStatusJSON(httpError.StatusCode, &utils.HTTPResponse{
 					Message:   httpError.Message,
 					Timestamp: httpError.Timestamp,
+					Code:      httpError.Code,
 				})
 				return
 			}
 
 			if errors.Is(originalErr, gorm.ErrRecordNotFound) {
-				c.AbortWithStatusJSON(http.StatusNotFound, exception.NewHttpError(
-					enum.ERR_NOT_FOUND,
-					"Data not found",
-					http.StatusNotFound,
-				))
+				c.AbortWithStatusJSON(http.StatusNotFound, &utils.HTTPResponse{
+					Message:   "Data not found",
+					Timestamp: time.Now(),
+					Code:      enum.ERR_NOT_FOUND,
+				})
 				return
 			}
-			c.AbortWithStatusJSON(http.StatusInternalServerError, exception.HTTPError{
-				Code:      enum.ERR_INTERNAL_SERVER_ERROR,
+
+			c.AbortWithStatusJSON(http.StatusInternalServerError, &utils.HTTPResponse{
 				Message:   originalErr.Error(),
 				Timestamp: time.Now(),
+				Code:      enum.ERR_INTERNAL_SERVER_ERROR,
 			})
 		}
 	}

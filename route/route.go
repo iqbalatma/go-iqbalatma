@@ -1,7 +1,9 @@
 package route
 
 import (
+	"iqbalatma/go-iqbalatma/app/controller/auth"
 	"iqbalatma/go-iqbalatma/app/controller/management"
+	"iqbalatma/go-iqbalatma/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,7 +21,18 @@ func RegisterRoute(router *gin.Engine) {
 	apiRoute := router.Group("/api")
 
 	{
-		managementRoute := apiRoute.Group("/management")
+		authRoute := apiRoute.Group("/auth")
+		{
+			authController := auth.NewAuthController()
+			authRoute.POST("/authenticate", ErrorHandleWrapper(authController.Authenticate))
+		}
+	}
+
+	authenticatedRoute := apiRoute.Group("")
+	authenticatedRoute.Use(middleware.AuthMiddleware())
+
+	{
+		managementRoute := authenticatedRoute.Group("/management")
 		{
 			userController := management.NewUserController()
 			users := managementRoute.Group("/users")
@@ -30,4 +43,5 @@ func RegisterRoute(router *gin.Engine) {
 			users.DELETE("/:id", ErrorHandleWrapper(userController.Destroy))
 		}
 	}
+
 }

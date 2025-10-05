@@ -9,8 +9,23 @@ import (
 	"github.com/jaswdr/faker"
 )
 
+var defaultUser []model.User = []model.User{
+	{
+		FirstName: "Iqbal",
+		LastName:  "Atma Muliawan",
+		Password:  "admin",
+		Email:     "iqbalatma@gmail.com",
+	},
+}
+
 func UserSeeder() {
 	fmt.Println("Seed User")
+	for _, u := range defaultUser {
+		hashedPassword, _ := utils.MakeHash(u.Password)
+
+		u.Password = hashedPassword
+		config.DB.Create(&u)
+	}
 
 	fake := faker.New()
 	for i := 0; i < 100; i++ {
@@ -23,5 +38,6 @@ func UserSeeder() {
 		}
 		config.DB.Create(&user)
 	}
+
 	fmt.Println("Seed Completed")
 }
