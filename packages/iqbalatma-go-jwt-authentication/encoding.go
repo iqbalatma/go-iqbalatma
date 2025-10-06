@@ -2,6 +2,7 @@ package iqbalatma_go_jwt_authentication
 
 import (
 	"fmt"
+	"iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/config"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -31,7 +32,7 @@ func Encode(
 	iss string,
 	iua string,
 ) (string, string, error) {
-	key := []byte(Config.JWTSecretKey)
+	key := []byte(config.Config.JWTSecretKey)
 
 	payload := getDefaultPayload()
 	payload.TYPE = tokenType
@@ -47,7 +48,7 @@ func Encode(
 
 	addTTL(payload)
 
-	token := jwt.NewWithClaims(GetSigningMethod(),
+	token := jwt.NewWithClaims(config.GetSigningMethod(),
 		payload.ToMapClaims(),
 	)
 

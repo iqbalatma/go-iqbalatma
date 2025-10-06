@@ -2,12 +2,14 @@ package iqbalatma_go_jwt_authentication
 
 import (
 	"fmt"
+	"iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/blacklist"
 	"strings"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-func ValidateAccessToken(jwtToken string, accessTokenVerifier *string) (*Payload, error) {
+func ValidateAccessToken(jwtToken string, accessTokenVerifier *string, blacklist blacklist.Blacklist) (*Payload, error) {
 	payload, err := Decode(jwtToken)
 	if err != nil {
 		return nil, err
@@ -19,6 +21,17 @@ func ValidateAccessToken(jwtToken string, accessTokenVerifier *string) (*Payload
 	}
 
 	//check is on blacklist
+	jti := blacklist.Get(payload.JTI)
+
+	//when jti is on blacklist
+	if jti != nil {
+		return nil, ErrExpiredToken
+	}
+
+	//if now greater than exp, mean it's already expired
+	if time.Now().Unix() > payload.EXP {
+		return nil, ErrExpiredToken
+	}
 
 	//check is atv is valid
 	if payload.IUC {
@@ -28,7 +41,7 @@ func ValidateAccessToken(jwtToken string, accessTokenVerifier *string) (*Payload
 
 		fmt.Println("GET ATV FROM PAYLOAD HASHED : " + payload.ATV)
 		fmt.Println("GET ATV UUID FROM COOKIE PLAIN  : " + *accessTokenVerifier)
-		
+
 		err := bcrypt.CompareHashAndPassword([]byte(payload.ATV), []byte(*accessTokenVerifier))
 		if err != nil {
 			return nil, ErrInvalidAccessTokenVerifier

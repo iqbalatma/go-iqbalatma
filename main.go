@@ -8,6 +8,7 @@ import (
 	"iqbalatma/go-iqbalatma/config"
 	"iqbalatma/go-iqbalatma/middleware"
 	iqbalatma_go_jwt_authentication "iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication"
+	config2 "iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/config"
 	"iqbalatma/go-iqbalatma/route"
 	"iqbalatma/go-iqbalatma/utils"
 	"os"
@@ -19,8 +20,8 @@ func main() {
 	config.LoadEnv()
 	config.ConnectDB()
 	config.LoadLogger()
-
-	iqbalatma_go_jwt_authentication.LoadJWTConfig()
+	config2.LoadJWTConfig()
+	config2.ConnectRedis()
 
 	uuid := "6d5b857e-2832-477e-a0b8-7f3a289ef942"
 	hash, err := utils.MakeHash(uuid)

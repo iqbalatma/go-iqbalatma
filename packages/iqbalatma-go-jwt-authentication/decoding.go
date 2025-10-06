@@ -1,11 +1,13 @@
 package iqbalatma_go_jwt_authentication
 
 import (
+	"iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/config"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func Decode(jwtString string) (*Payload, error) {
-	key := []byte(Config.JWTSecretKey)
+	key := []byte(config.Config.JWTSecretKey)
 	payload := &Payload{}
 
 	token, err := jwt.Parse(jwtString, func(t *jwt.Token) (interface{}, error) {

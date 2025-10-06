@@ -1,9 +1,11 @@
 package iqbalatma_go_jwt_authentication
 
+import "iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/config"
+
 func GetAccessTTL() int {
-	return Config.AccessTokenTTL
+	return config.Config.AccessTokenTTL
 }
 
 func GetRefreshTTL() int {
-	return Config.RefreshTokenTTL
+	return config.Config.RefreshTokenTTL
 }
