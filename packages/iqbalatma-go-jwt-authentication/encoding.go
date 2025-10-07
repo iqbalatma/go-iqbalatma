@@ -35,6 +35,12 @@ func Encode(
 	key := []byte(config.Config.JWTSecretKey)
 
 	payload := getDefaultPayload()
+	incidentTime, err := GetIncidentTime()
+	if err != nil { //it's mean incident time is not set or wrong form, then it will set at this time
+		payload.EXP = incidentTime
+		payload.NBF = incidentTime
+		payload.IAT = incidentTime
+	}
 	payload.TYPE = tokenType
 	payload.SUB = subject.GetSubjectKey()
 	payload.ISS = iss

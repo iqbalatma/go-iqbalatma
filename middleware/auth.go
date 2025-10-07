@@ -3,8 +3,6 @@ package middleware
 import (
 	exception "iqbalatma/go-iqbalatma/error"
 	iqbalatma_go_jwt_authentication "iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication"
-	"iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/blacklist"
-	"iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/config"
 	"iqbalatma/go-iqbalatma/utils"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +15,6 @@ func AuthMiddleware() gin.HandlerFunc {
 		_, err := iqbalatma_go_jwt_authentication.ValidateAccessToken(
 			iqbalatma_go_jwt_authentication.GetRemovedBearer(token),
 			&accessTokenVerifier,
-			blacklist.NewRedisBlacklist(config.RDB),
 		)
 
 		if err != nil {

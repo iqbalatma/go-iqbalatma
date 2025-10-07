@@ -16,6 +16,7 @@ type JWTConfig struct {
 	RedisPort       string
 	RedisPassword   string
 	RedisDatabase   string
+	IncidentKey     string
 }
 
 var Config *JWTConfig
@@ -40,11 +41,12 @@ func LoadJWTConfig() {
 		RedisPort:       os.Getenv("JWT_REDIS_PORT"),
 		RedisPassword:   os.Getenv("JWT_REDIS_PASSWORD"),
 		RedisDatabase:   os.Getenv("JWT_REDIS_DB"),
+		IncidentKey:     os.Getenv("JWT_BLACKLIST_INCIDENT_TIME_KEY"),
 	}
 }
 
-func GetSigningMethod() jwt.SigningMethod {
-	signingMethods := map[string]jwt.SigningMethod{
+func getAvailableSigningMethods() map[string]jwt.SigningMethod {
+	return map[string]jwt.SigningMethod{
 		"HS256": jwt.SigningMethodHS256,
 		"HS384": jwt.SigningMethodHS384,
 		"HS512": jwt.SigningMethodHS512,
@@ -59,6 +61,7 @@ func GetSigningMethod() jwt.SigningMethod {
 		"RS512": jwt.SigningMethodRS512,
 		"RS384": jwt.SigningMethodRS384,
 	}
-
-	return signingMethods[Config.SigningMethod]
+}
+func GetSigningMethod() jwt.SigningMethod {
+	return getAvailableSigningMethods()[Config.SigningMethod]
 }
