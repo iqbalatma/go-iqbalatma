@@ -2,7 +2,6 @@ package iqbalatma_go_jwt_authentication
 
 import (
 	"errors"
-	"fmt"
 	"iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/blacklist"
 	"iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/config"
 	"strconv"
@@ -14,6 +13,7 @@ import (
 
 func ValidateAccessToken(jwtToken string, accessTokenVerifier *string) (*Payload, error) {
 	payload, err := Decode(jwtToken)
+
 	if err != nil {
 		return nil, err
 	}
@@ -27,8 +27,6 @@ func ValidateAccessToken(jwtToken string, accessTokenVerifier *string) (*Payload
 
 	//it's mean this token is created before incident time, could be it's actually on blacklist but the list is gone
 	//so blacklist all token that created before incident time
-	fmt.Println(payload.IAT)
-	fmt.Println(incidentTime)
 	if payload.IAT < incidentTime {
 		return nil, ErrExpiredToken
 	}
@@ -56,9 +54,6 @@ func ValidateAccessToken(jwtToken string, accessTokenVerifier *string) (*Payload
 		if accessTokenVerifier == nil {
 			return nil, ErrMissingRequiredAccessTokenVerifierCookie
 		}
-
-		fmt.Println("GET ATV FROM PAYLOAD HASHED : " + payload.ATV)
-		fmt.Println("GET ATV UUID FROM COOKIE PLAIN  : " + *accessTokenVerifier)
 
 		err := bcrypt.CompareHashAndPassword([]byte(payload.ATV), []byte(*accessTokenVerifier))
 		if err != nil {

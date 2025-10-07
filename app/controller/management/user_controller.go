@@ -2,7 +2,6 @@ package management
 
 import (
 	"iqbalatma/go-iqbalatma/app/enum"
-	interfacecontroller "iqbalatma/go-iqbalatma/app/interface/controller"
 	interfaceservice "iqbalatma/go-iqbalatma/app/interface/service"
 	"iqbalatma/go-iqbalatma/app/service/management"
 	"iqbalatma/go-iqbalatma/utils"
@@ -64,7 +63,7 @@ func (ctrl *UserController) Destroy(c *gin.Context) error {
 	return nil
 }
 
-func NewUserController() interfacecontroller.UserControllerInterface {
+func NewUserController() *UserController {
 	return &UserController{
 		UserService: management.NewUserService(),
 	}

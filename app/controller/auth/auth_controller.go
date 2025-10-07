@@ -1,9 +1,7 @@
 package auth
 
 import (
-	"fmt"
 	"iqbalatma/go-iqbalatma/app/enum"
-	"iqbalatma/go-iqbalatma/app/interface/controller"
 	"iqbalatma/go-iqbalatma/app/interface/service"
 	"iqbalatma/go-iqbalatma/app/service/auth"
 	iqbalatma_go_jwt_authentication "iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication"
@@ -18,8 +16,8 @@ type AuthController struct {
 	AuthService service.AuthService
 }
 
-func (a AuthController) Authenticate(c *gin.Context) error {
-	user, err := a.AuthService.Authenticate(c)
+func (this AuthController) Authenticate(c *gin.Context) error {
+	user, err := this.AuthService.Authenticate(c)
 	if err != nil {
 		return err
 	}
@@ -61,8 +59,6 @@ func (a AuthController) Authenticate(c *gin.Context) error {
 		true,
 	)
 
-	fmt.Println("ATV SET TO COOKIE WITH KEY access_token_verifier : " + atv)
-
 	c.JSON(http.StatusOK, &utils.HTTPResponse{
 		Message:   "Authenticate User Successfully",
 		Timestamp: time.Now(),
@@ -80,7 +76,25 @@ func (a AuthController) Authenticate(c *gin.Context) error {
 	return nil
 }
 
-func NewAuthController() controller.AuthControllerInterface {
+func (this AuthController) Logout(c *gin.Context) error {
+	var accessToken string = c.GetHeader("Authorization")
+	_, err := iqbalatma_go_jwt_authentication.Revoke(
+		iqbalatma_go_jwt_authentication.GetRemovedBearer(accessToken),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, &utils.HTTPResponse{
+		Message:   "Logout Successfully",
+		Timestamp: time.Now(),
+		Code:      enum.SUCCESS,
+	})
+	return nil
+}
+
+func NewAuthController() AuthController {
 	return AuthController{
 		AuthService: auth.NewAuthService(),
 	}

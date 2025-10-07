@@ -1,7 +1,6 @@
 package iqbalatma_go_jwt_authentication
 
 import (
-	"fmt"
 	"iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication/config"
 	"time"
 
@@ -76,12 +75,10 @@ func addTTL(payload *Payload) {
 func addATV(payload *Payload) (string, error) {
 	if payload.TYPE == ACCESS_TOKEN {
 		var atv string = uuid.New().String()
-		fmt.Println("ATV UUID CREATED : " + atv)
 		bytes, err := bcrypt.GenerateFromPassword([]byte(atv), bcrypt.DefaultCost)
 		if err != nil {
 			return "", err
 		}
-		fmt.Println("ATV UUID HASHED : " + string(bytes))
 		payload.ATV = string(bytes)
 
 		return atv, nil

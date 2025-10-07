@@ -19,17 +19,19 @@ func ErrorHandleWrapper(h func(*gin.Context) error) gin.HandlerFunc {
 
 func RegisterRoute(router *gin.Engine) {
 	apiRoute := router.Group("/api")
+	authController := auth.NewAuthController()
 
 	{
 		authRoute := apiRoute.Group("/auth")
 		{
-			authController := auth.NewAuthController()
 			authRoute.POST("/authenticate", ErrorHandleWrapper(authController.Authenticate))
 		}
 	}
 
 	authenticatedRoute := apiRoute.Group("")
 	authenticatedRoute.Use(middleware.AuthMiddleware())
+
+	authenticatedRoute.POST("/auth/logout", ErrorHandleWrapper(authController.Logout))
 
 	{
 		managementRoute := authenticatedRoute.Group("/management")

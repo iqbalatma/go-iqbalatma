@@ -11,6 +11,11 @@ type Blacklist interface {
 	Delete(key string)
 }
 
+// GetBlacklist TODO :
 func GetBlacklist() Blacklist {
 	return NewRedisBlacklist(config.RDB)
+}
+
+func AddBlacklistToken(jti string, duration time.Duration) {
+	GetBlacklist().Set(jti, true, duration)
 }

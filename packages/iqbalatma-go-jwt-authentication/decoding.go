@@ -9,7 +9,6 @@ import (
 func Decode(jwtString string) (*Payload, error) {
 	key := []byte(config.Config.JWTSecretKey)
 	payload := &Payload{}
-
 	token, err := jwt.Parse(jwtString, func(t *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
