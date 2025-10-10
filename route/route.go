@@ -25,6 +25,7 @@ func RegisterRoute(router *gin.Engine) {
 		authRoute := apiRoute.Group("/auth")
 		{
 			authRoute.POST("/authenticate", ErrorHandleWrapper(authController.Authenticate))
+			authRoute.POST("/refresh", middleware.RefreshMiddleware(), ErrorHandleWrapper(authController.Refresh))
 		}
 	}
 

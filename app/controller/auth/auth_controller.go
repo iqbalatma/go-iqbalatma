@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"fmt"
 	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/app/interface/service"
+	"iqbalatma/go-iqbalatma/app/model"
 	"iqbalatma/go-iqbalatma/app/service/auth"
 	iqbalatma_go_jwt_authentication "iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication"
 	"iqbalatma/go-iqbalatma/utils"
@@ -90,6 +92,83 @@ func (this AuthController) Logout(c *gin.Context) error {
 		Message:   "Logout Successfully",
 		Timestamp: time.Now(),
 		Code:      enum.SUCCESS,
+	})
+	return nil
+}
+
+func (this AuthController) Refresh(c *gin.Context) error {
+	refreshToken, _ := c.Cookie("refresh_token")
+
+	_, err := iqbalatma_go_jwt_authentication.Revoke(
+		iqbalatma_go_jwt_authentication.GetRemovedBearer(refreshToken),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	value, exists := c.Get("user")
+	fmt.Println(value)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found in context"})
+		return nil
+	}
+
+	user, ok := value.(*model.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to cast user"})
+		return nil
+	}
+
+	accessToken, atv, err := iqbalatma_go_jwt_authentication.Encode(user,
+		iqbalatma_go_jwt_authentication.ACCESS_TOKEN,
+		true,
+		"localhost",
+		c.Request.UserAgent(),
+	)
+
+	refreshToken, _, err = iqbalatma_go_jwt_authentication.Encode(user,
+		iqbalatma_go_jwt_authentication.REFRESH_TOKEN,
+		true,
+		"localhost",
+		c.Request.UserAgent(),
+	)
+	if err != nil {
+		return err
+	}
+	c.SetCookie(
+		"refresh_token",
+		refreshToken,
+		3600,
+		"/",
+		"localhost",
+		true,
+		true,
+	)
+
+	c.SetCookie(
+		"access_token_verifier",
+		atv,
+		3600,
+		"/",
+		"localhost",
+		true,
+		true,
+	)
+
+	c.JSON(http.StatusOK, &utils.HTTPResponse{
+		Message:   "Refresh Token User Successfully",
+		Timestamp: time.Now(),
+		Code:      enum.SUCCESS,
+		Payload: &utils.Payload{
+			Data: map[string]interface{}{
+				"id":           user.ID.String(),
+				"email":        user.Email,
+				"first_name":   user.FirstName,
+				"last_name":    user.LastName,
+				"access_token": accessToken,
+			},
+		},
 	})
 	return nil
 }
