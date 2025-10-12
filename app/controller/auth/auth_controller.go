@@ -2,11 +2,11 @@ package auth
 
 import (
 	"fmt"
+	"github.com/iqbalatma/gofortress"
 	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/app/interface/service"
 	"iqbalatma/go-iqbalatma/app/model"
 	"iqbalatma/go-iqbalatma/app/service/auth"
-	iqbalatma_go_jwt_authentication "iqbalatma/go-iqbalatma/packages/iqbalatma-go-jwt-authentication"
 	"iqbalatma/go-iqbalatma/utils"
 	"net/http"
 	"time"
@@ -24,15 +24,15 @@ func (this AuthController) Authenticate(c *gin.Context) error {
 		return err
 	}
 
-	accessToken, atv, err := iqbalatma_go_jwt_authentication.Encode(user,
-		iqbalatma_go_jwt_authentication.ACCESS_TOKEN,
+	accessToken, atv, err := gofortress.Encode(user,
+		gofortress.ACCESS_TOKEN,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
 	)
 
-	refreshToken, _, err := iqbalatma_go_jwt_authentication.Encode(user,
-		iqbalatma_go_jwt_authentication.REFRESH_TOKEN,
+	refreshToken, _, err := gofortress.Encode(user,
+		gofortress.REFRESH_TOKEN,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
@@ -80,8 +80,8 @@ func (this AuthController) Authenticate(c *gin.Context) error {
 
 func (this AuthController) Logout(c *gin.Context) error {
 	var accessToken string = c.GetHeader("Authorization")
-	_, err := iqbalatma_go_jwt_authentication.Revoke(
-		iqbalatma_go_jwt_authentication.GetRemovedBearer(accessToken),
+	_, err := gofortress.Revoke(
+		gofortress.GetRemovedBearer(accessToken),
 	)
 
 	if err != nil {
@@ -99,8 +99,8 @@ func (this AuthController) Logout(c *gin.Context) error {
 func (this AuthController) Refresh(c *gin.Context) error {
 	refreshToken, _ := c.Cookie("refresh_token")
 
-	_, err := iqbalatma_go_jwt_authentication.Revoke(
-		iqbalatma_go_jwt_authentication.GetRemovedBearer(refreshToken),
+	_, err := gofortress.Revoke(
+		gofortress.GetRemovedBearer(refreshToken),
 	)
 
 	if err != nil {
@@ -120,15 +120,15 @@ func (this AuthController) Refresh(c *gin.Context) error {
 		return nil
 	}
 
-	accessToken, atv, err := iqbalatma_go_jwt_authentication.Encode(user,
-		iqbalatma_go_jwt_authentication.ACCESS_TOKEN,
+	accessToken, atv, err := gofortress.Encode(user,
+		gofortress.ACCESS_TOKEN,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
 	)
 
-	refreshToken, _, err = iqbalatma_go_jwt_authentication.Encode(user,
-		iqbalatma_go_jwt_authentication.REFRESH_TOKEN,
+	refreshToken, _, err = gofortress.Encode(user,
+		gofortress.REFRESH_TOKEN,
 		true,
 		"localhost",
 		c.Request.UserAgent(),

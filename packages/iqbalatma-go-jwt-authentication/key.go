@@ -1,1 +1,0 @@
-package iqbalatma_go_jwt_authentication
