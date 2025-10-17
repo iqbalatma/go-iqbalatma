@@ -2,75 +2,33 @@ package exception
 
 import (
 	"iqbalatma/go-iqbalatma/app/enum"
-	"net/http"
+	"iqbalatma/go-iqbalatma/utils"
 )
 
-func InvalidAction(opts ...HTTPErrorOption) *HTTPError {
-	err := NewHttpError(
-		enum.ERR_INVALID_ACTION,
-		"Your action is invalid",
-		http.StatusForbidden,
-	)
-
-	for _, opt := range opts {
-		opt(err)
-	}
-
-	return err
-}
-
-func QuotaExceedException() *HTTPError {
-	return NewHttpError(
-		enum.ERR_INSUFFICIENT_QUOTA,
-		"Quota has been exceeded",
-		http.StatusTooManyRequests,
-	)
-}
-
-func QueryParameterInvalid(messages ...string) *HTTPError {
-	message := "Invalid query parameter"
+func newError(code enum.ResponseCode, defaultMessage string, messages ...string) *utils.HTTPError {
+	message := defaultMessage
 	if len(messages) > 0 && messages[0] != "" {
 		message = messages[0]
 	}
-	return NewHttpError(
-		enum.ERR_INVALID_QUERY_PARAMETER,
-		message,
-		http.StatusBadRequest,
-	)
+
+	return utils.NewHttpError(message, code)
+}
+func InvalidAction(messages ...string) *utils.HTTPError {
+	return newError(enum.ERR_INVALID_ACTION, "Invalid action")
 }
 
-func InvalidTokenTypeException(messages ...string) *HTTPError {
-	message := "Invalid token type"
-	if len(messages) > 0 && messages[0] != "" {
-		message = messages[0]
-	}
-	return NewHttpError(
-		enum.ERR_AUTHENTICATION,
-		message,
-		http.StatusUnauthorized,
-	)
+func QueryParameterInvalid(messages ...string) *utils.HTTPError {
+	return newError(enum.ERR_INVALID_QUERY_PARAMETER, "Invalid query parameter")
 }
 
-func InternalServerError(messages ...string) *HTTPError {
-	message := "Internal server error"
-	if len(messages) > 0 && messages[0] != "" {
-		message = messages[0]
-	}
-	return NewHttpError(
-		enum.ERR_INTERNAL_SERVER_ERROR,
-		message,
-		http.StatusInternalServerError,
-	)
+func InvalidTokenTypeException(messages ...string) *utils.HTTPError {
+	return newError(enum.ERR_AUTHENTICATION, "Invalid token type")
 }
 
-func UnauthorizedException(messages ...string) *HTTPError {
-	message := "Unauthorized"
-	if len(messages) > 0 && messages[0] != "" {
-		message = messages[0]
-	}
-	return NewHttpError(
-		enum.ERR_ACTION_UNAUTHORIZED,
-		message,
-		http.StatusUnauthorized,
-	)
+func InternalServerError(messages ...string) *utils.HTTPError {
+	return newError(enum.ERR_INTERNAL_SERVER_ERROR, "Internal server error")
+}
+
+func UnauthorizedException(messages ...string) *utils.HTTPError {
+	return newError(enum.ERR_ACTION_UNAUTHORIZED, "Unauthorized")
 }

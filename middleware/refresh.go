@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"errors"
-	"github.com/iqbalatma/gofortress"
 	"iqbalatma/go-iqbalatma/app/model"
 	"iqbalatma/go-iqbalatma/config"
 	exception "iqbalatma/go-iqbalatma/error"
 	"iqbalatma/go-iqbalatma/utils"
+
+	"github.com/iqbalatma/gofortress"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -16,11 +17,11 @@ func RefreshMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token, _ := c.Cookie("refresh_token")
 		payload, err := gofortress.ValidateRefreshToken(
-			gofortress.GetRemovedBearer(token),
+			&token,
 		)
 
 		if err != nil {
-			var httpErr *exception.HTTPError
+			var httpErr *utils.HTTPError
 
 			switch err {
 			case gofortress.ErrInvalidTokenType:
@@ -31,11 +32,7 @@ func RefreshMiddleware() gin.HandlerFunc {
 				httpErr = exception.UnauthorizedException(err.Error())
 			}
 
-			c.AbortWithStatusJSON(httpErr.StatusCode, &utils.HTTPResponse{
-				Message:   httpErr.Message,
-				Timestamp: httpErr.Timestamp,
-				Code:      httpErr.Code,
-			})
+			c.AbortWithStatusJSON(httpErr.StatusCode, utils.NewHttpError(httpErr.Message, httpErr.Code))
 			return
 		}
 

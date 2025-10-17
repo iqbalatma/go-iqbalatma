@@ -1,15 +1,13 @@
 package auth
 
 import (
-	"fmt"
-	"github.com/iqbalatma/gofortress"
-	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/app/interface/service"
 	"iqbalatma/go-iqbalatma/app/model"
 	"iqbalatma/go-iqbalatma/app/service/auth"
 	"iqbalatma/go-iqbalatma/utils"
 	"net/http"
-	"time"
+
+	"github.com/iqbalatma/gofortress"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,14 +23,14 @@ func (this AuthController) Authenticate(c *gin.Context) error {
 	}
 
 	accessToken, atv, err := gofortress.Encode(user,
-		gofortress.ACCESS_TOKEN,
+		gofortress.AccessToken,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
 	)
 
 	refreshToken, _, err := gofortress.Encode(user,
-		gofortress.REFRESH_TOKEN,
+		gofortress.RefreshToken,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
@@ -61,38 +59,31 @@ func (this AuthController) Authenticate(c *gin.Context) error {
 		true,
 	)
 
-	c.JSON(http.StatusOK, &utils.HTTPResponse{
-		Message:   "Authenticate User Successfully",
-		Timestamp: time.Now(),
-		Code:      enum.SUCCESS,
-		Payload: &utils.Payload{
-			Data: map[string]interface{}{
-				"id":           user.ID.String(),
-				"email":        user.Email,
-				"first_name":   user.FirstName,
-				"last_name":    user.LastName,
-				"access_token": accessToken,
-			},
+	c.JSON(http.StatusOK, utils.NewHttpSuccess("Authenticate user successfully", &utils.Payload{
+		Data: map[string]interface{}{
+			"id":           user.ID.String(),
+			"email":        user.Email,
+			"first_name":   user.FirstName,
+			"last_name":    user.LastName,
+			"access_token": accessToken,
 		},
-	})
+	}))
+
 	return nil
 }
 
 func (this AuthController) Logout(c *gin.Context) error {
 	var accessToken string = c.GetHeader("Authorization")
 	_, err := gofortress.Revoke(
-		gofortress.GetRemovedBearer(accessToken),
+		&accessToken,
 	)
 
 	if err != nil {
 		return err
 	}
 
-	c.JSON(http.StatusOK, &utils.HTTPResponse{
-		Message:   "Logout Successfully",
-		Timestamp: time.Now(),
-		Code:      enum.SUCCESS,
-	})
+	c.JSON(http.StatusOK, utils.NewHttpSuccess("Logout Successfully", nil))
+
 	return nil
 }
 
@@ -100,7 +91,7 @@ func (this AuthController) Refresh(c *gin.Context) error {
 	refreshToken, _ := c.Cookie("refresh_token")
 
 	_, err := gofortress.Revoke(
-		gofortress.GetRemovedBearer(refreshToken),
+		&refreshToken,
 	)
 
 	if err != nil {
@@ -108,7 +99,6 @@ func (this AuthController) Refresh(c *gin.Context) error {
 	}
 
 	value, exists := c.Get("user")
-	fmt.Println(value)
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found in context"})
 		return nil
@@ -121,14 +111,14 @@ func (this AuthController) Refresh(c *gin.Context) error {
 	}
 
 	accessToken, atv, err := gofortress.Encode(user,
-		gofortress.ACCESS_TOKEN,
+		gofortress.AccessToken,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
 	)
 
 	refreshToken, _, err = gofortress.Encode(user,
-		gofortress.REFRESH_TOKEN,
+		gofortress.RefreshToken,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
@@ -156,20 +146,15 @@ func (this AuthController) Refresh(c *gin.Context) error {
 		true,
 	)
 
-	c.JSON(http.StatusOK, &utils.HTTPResponse{
-		Message:   "Refresh Token User Successfully",
-		Timestamp: time.Now(),
-		Code:      enum.SUCCESS,
-		Payload: &utils.Payload{
-			Data: map[string]interface{}{
-				"id":           user.ID.String(),
-				"email":        user.Email,
-				"first_name":   user.FirstName,
-				"last_name":    user.LastName,
-				"access_token": accessToken,
-			},
+	c.JSON(http.StatusOK, utils.NewHttpSuccess("Refresh Token User Successfully", &utils.Payload{
+		Data: map[string]interface{}{
+			"id":           user.ID.String(),
+			"email":        user.Email,
+			"first_name":   user.FirstName,
+			"last_name":    user.LastName,
+			"access_token": accessToken,
 		},
-	})
+	}))
 	return nil
 }
 

@@ -1,12 +1,10 @@
 package management
 
 import (
-	"iqbalatma/go-iqbalatma/app/enum"
 	interfaceservice "iqbalatma/go-iqbalatma/app/interface/service"
 	"iqbalatma/go-iqbalatma/app/service/management"
 	"iqbalatma/go-iqbalatma/utils"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,12 +20,7 @@ func (ctrl *UserController) Index(c *gin.Context) error {
 		return err
 	}
 
-	c.JSON(http.StatusOK, &utils.HTTPResponse{
-		Message:   "Get all data user successfully",
-		Timestamp: time.Now(),
-		Code:      enum.SUCCESS,
-		Payload:   payload,
-	})
+	c.JSON(http.StatusOK, utils.NewHttpSuccess("Get all data user successfully", payload))
 	return nil
 }
 

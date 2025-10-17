@@ -2,12 +2,11 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/config"
-	exception "iqbalatma/go-iqbalatma/error"
 	"iqbalatma/go-iqbalatma/utils"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -17,45 +16,33 @@ import (
 func ErrorHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Next()
+		var httpResponse *utils.HTTPError
 
 		if ginErr := c.Errors.Last(); ginErr != nil {
 			originalErr := ginErr.Err
-			config.AppLogger.WithFields(logrus.Fields{
-				"request_id": c.GetString("RequestID"),
-				"method":     c.Request.Method,
-				"path":       c.Request.URL.Path,
-				"ip":         c.ClientIP(),
-			}).Error(originalErr)
-			var httpError *exception.HTTPError
-			if errors.As(originalErr, &httpError) {
-				c.AbortWithStatusJSON(httpError.StatusCode, exception.NewHttpError(
-					httpError.Code,
-					httpError.Message,
-					httpError.StatusCode,
-				))
 
-				c.AbortWithStatusJSON(httpError.StatusCode, &utils.HTTPResponse{
-					Message:   httpError.Message,
-					Timestamp: httpError.Timestamp,
-					Code:      httpError.Code,
-				})
-				return
-			}
-
+			logError(c, originalErr)
+			fmt.Printf("Error type: %T\n", originalErr)
 			if errors.Is(originalErr, gorm.ErrRecordNotFound) {
-				c.AbortWithStatusJSON(http.StatusNotFound, &utils.HTTPResponse{
-					Message:   "Data not found",
-					Timestamp: time.Now(),
-					Code:      enum.ERR_NOT_FOUND,
-				})
+				c.AbortWithStatusJSON(http.StatusNotFound, utils.NewHttpError("Data not found", enum.ERR_NOT_FOUND))
 				return
 			}
 
-			c.AbortWithStatusJSON(http.StatusInternalServerError, &utils.HTTPResponse{
-				Message:   originalErr.Error(),
-				Timestamp: time.Now(),
-				Code:      enum.ERR_INTERNAL_SERVER_ERROR,
-			})
+			if errors.As(originalErr, &httpResponse) {
+				c.AbortWithStatusJSON(httpResponse.StatusCode, utils.NewHttpError(httpResponse.Message, httpResponse.Code))
+				return
+			}
+
+			c.AbortWithStatusJSON(http.StatusInternalServerError, utils.NewHttpError(originalErr.Error(), enum.ERR_INTERNAL_SERVER_ERROR))
 		}
 	}
+}
+
+func logError(c *gin.Context, err error) {
+	config.AppLogger.WithFields(logrus.Fields{
+		"request_id": c.GetString("RequestID"),
+		"method":     c.Request.Method,
+		"path":       c.Request.URL.Path,
+		"ip":         c.ClientIP(),
+	}).Error(err)
 }

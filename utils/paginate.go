@@ -1,7 +1,7 @@
 package utils
 
 import (
-	exception "iqbalatma/go-iqbalatma/error"
+	"iqbalatma/go-iqbalatma/app/enum"
 	"math"
 	"strconv"
 
@@ -26,7 +26,10 @@ func Paginate[T any](c *gin.Context, db *gorm.DB, out *[]T) (*PaginationMeta, er
 	}
 
 	if perPage > MaximumPerPage {
-		return nil, exception.QueryParameterInvalid("Your per_page is exceed. Maximum per_page is 100")
+		return nil, NewHttpError(
+			"Invalid query parameter",
+			enum.ERR_INVALID_QUERY_PARAMETER,
+		)
 	}
 
 	var total int64

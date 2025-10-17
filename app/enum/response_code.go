@@ -1,5 +1,7 @@
 package enum
 
+import "net/http"
+
 type ResponseCode string
 
 const (
@@ -27,3 +29,21 @@ const (
 	ERR_BAD_REQUEST              ResponseCode = "ERR_BAD_REQUEST"
 	ERR_UNKNOWN                  ResponseCode = "ERR_UNKNOWN"
 )
+
+// 📘 Map untuk mengaitkan setiap ResponseCode dengan HTTP status code
+var responseCodeHTTPStatus = map[ResponseCode]int{
+	SUCCESS:                 http.StatusOK,
+	CREATED:                 http.StatusCreated,
+	ERR_NOT_FOUND:           http.StatusNotFound,
+	ERR_ACTION_UNAUTHORIZED: http.StatusUnauthorized,
+	ERR_AUTHENTICATION:      http.StatusUnauthorized,
+	ERR_INVALID_ACTION:      http.StatusForbidden,
+}
+
+func (r ResponseCode) HTTPStatus() int {
+	if status, exist := responseCodeHTTPStatus[r]; exist {
+		return status
+	}
+
+	return http.StatusInternalServerError
+}

@@ -1,15 +1,33 @@
 package utils
 
 import (
+	"fmt"
 	"iqbalatma/go-iqbalatma/app/enum"
 	"time"
 )
 
+type BaseHttpResponse struct {
+	Code       enum.ResponseCode `json:"code"`
+	Message    string            `json:"message"`
+	StatusCode int               `json:"status_code"`
+	Timestamp  time.Time         `json:"timestamp"`
+	Payload    *Payload          `json:"payload"`
+}
 type HTTPResponse struct {
-	Code      enum.ResponseCode `json:"code"`
-	Message   string            `json:"message"`
-	Timestamp time.Time         `json:"timestamp"`
-	Payload   *Payload          `json:"payload"`
+	BaseHttpResponse
+}
+
+type HTTPError struct {
+	BaseHttpResponse
+}
+
+func (H HTTPError) Error() string {
+	return fmt.Sprintf(
+		"message : %s, code: %s, timetamp: %s",
+		H.Message,
+		H.Code,
+		H.Timestamp,
+	)
 }
 
 type Payload struct {
@@ -27,7 +45,26 @@ type PaginationMeta struct {
 	Total       int64  `json:"total"`
 }
 
-type ResponseOption struct {
-	HTTPStatusCode int
-	Code           enum.ResponseCode
+func NewHttpSuccess(message string, payload *Payload) *HTTPResponse {
+	return &HTTPResponse{
+		BaseHttpResponse: BaseHttpResponse{
+			Code:       enum.SUCCESS,
+			Timestamp:  time.Now(),
+			StatusCode: enum.SUCCESS.HTTPStatus(),
+			Message:    message,
+			Payload:    payload,
+		},
+	}
+}
+
+func NewHttpError(message string, code enum.ResponseCode) *HTTPError {
+	return &HTTPError{
+		BaseHttpResponse: BaseHttpResponse{
+			Code:       code,
+			StatusCode: code.HTTPStatus(),
+			Timestamp:  time.Now(),
+			Message:    message,
+			Payload:    nil,
+		},
+	}
 }

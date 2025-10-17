@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-	config2 "github.com/iqbalatma/gofortress/config"
 	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/cmd"
 	"iqbalatma/go-iqbalatma/config"
 	"iqbalatma/go-iqbalatma/middleware"
 	"iqbalatma/go-iqbalatma/route"
 	"os"
+
+	config2 "github.com/iqbalatma/gofortress/config"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,8 +39,8 @@ func runServer() {
 	router := gin.New()
 	router.
 		Use(middleware.RequestLatencyMiddleware()).
-		Use(middleware.ErrorHandler()).
-		Use(middleware.RequestIDMiddleware())
+		Use(middleware.RequestIDMiddleware()).
+		Use(middleware.ErrorHandler())
 	route.RegisterRoute(router)
 
 	err := router.Run(":" + config.AppConfig.AppPort)
