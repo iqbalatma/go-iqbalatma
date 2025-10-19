@@ -11,6 +11,7 @@ const (
 	ERR_USER_HAS_NO_ROLE         ResponseCode = "ERR_USER_HAS_NO_ROLE"
 	ERR_UNIQUENESS               ResponseCode = "ERR_UNIQUENESS"
 	ERR_NOT_FOUND                ResponseCode = "ERR_NOT_FOUND"
+	ERR_ROUTE_NOT_FOUND          ResponseCode = "ERR_ROUTE_NOT_FOUND"
 	ERR_ACTION_UNAUTHORIZED      ResponseCode = "ERR_ACTION_UNAUTHORIZED"
 	ERR_INVALID_ACTION           ResponseCode = "ERR_INVALID_ACTION"
 	ERR_FORBIDDEN                ResponseCode = "ERR_FORBIDDEN"
@@ -35,6 +36,7 @@ var responseCodeHTTPStatus = map[ResponseCode]int{
 	SUCCESS:                 http.StatusOK,
 	CREATED:                 http.StatusCreated,
 	ERR_NOT_FOUND:           http.StatusNotFound,
+	ERR_ROUTE_NOT_FOUND:     http.StatusNotFound,
 	ERR_ACTION_UNAUTHORIZED: http.StatusUnauthorized,
 	ERR_AUTHENTICATION:      http.StatusUnauthorized,
 	ERR_INVALID_ACTION:      http.StatusForbidden,

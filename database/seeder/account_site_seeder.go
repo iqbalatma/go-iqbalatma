@@ -2,9 +2,10 @@ package seeder
 
 import (
 	"fmt"
-	"github.com/jaswdr/faker"
 	"iqbalatma/go-iqbalatma/app/model"
 	"iqbalatma/go-iqbalatma/config"
+
+	"github.com/jaswdr/faker"
 )
 
 func AccountSiteSeeder() {
@@ -16,7 +17,7 @@ func AccountSiteSeeder() {
 		name := fake.Internet().Email()
 		description := fake.Lorem().Paragraph(3)
 
-		fmt.Printf("%d Create account_sites for name : %s", i+1, name)
+		fmt.Printf("%d Create account_sites for name : %s \n", i+1, name)
 		accountSite := model.AccountSite{
 			Name:        name,
 			Url:         fake.Internet().Domain(),

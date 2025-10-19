@@ -4,7 +4,10 @@ import (
 	"iqbalatma/go-iqbalatma/app/controller/account"
 	"iqbalatma/go-iqbalatma/app/controller/auth"
 	"iqbalatma/go-iqbalatma/app/controller/management"
+	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/middleware"
+	"iqbalatma/go-iqbalatma/utils"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +22,10 @@ func ErrorHandleWrapper(h func(*gin.Context) error) gin.HandlerFunc {
 }
 
 func RegisterRoute(router *gin.Engine) {
+	router.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, utils.NewHttpError("Route does not exist", enum.ERR_ROUTE_NOT_FOUND))
+	})
+
 	apiRoute := router.Group("/api")
 	authController := auth.NewAuthController()
 
@@ -54,6 +61,7 @@ func RegisterRoute(router *gin.Engine) {
 			accountSiteController := account.NewAccountSiteController()
 			accountSites := accountRoute.Group("/account-sites")
 			accountSites.GET("/", ErrorHandleWrapper(accountSiteController.Index))
+			accountSites.GET("/:id", ErrorHandleWrapper(accountSiteController.Show))
 		}
 	}
 
