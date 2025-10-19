@@ -1,17 +1,16 @@
 package account
 
 import (
-	interfaceservice "iqbalatma/go-iqbalatma/app/interface/service"
+	"github.com/gin-gonic/gin"
+	"iqbalatma/go-iqbalatma/app/dto"
 	"iqbalatma/go-iqbalatma/app/resource"
 	"iqbalatma/go-iqbalatma/app/service/account"
 	"iqbalatma/go-iqbalatma/utils"
 	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
 type AccountSiteController struct {
-	AccountSiteService interfaceservice.AccountSiteService
+	AccountSiteService account.AccountSiteService
 }
 
 func (this AccountSiteController) Index(c *gin.Context) error {
@@ -45,6 +44,23 @@ func (this AccountSiteController) Show(c *gin.Context) error {
 	}
 
 	c.JSON(http.StatusOK, utils.NewHttpSuccess("Get data account site by id successfully", &utils.Payload{Data: resource.ToAccountSiteResource(data)}))
+	return nil
+}
+
+func (this AccountSiteController) Store(c *gin.Context) error {
+	var request dto.CreateAccountSiteRequest
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		return err
+	}
+
+	data, err := this.AccountSiteService.AddNewData(c, request)
+	if err != nil {
+		return err
+	}
+
+	c.JSON(http.StatusOK, utils.NewHttpSuccess("Get data account site by id successfully", &utils.Payload{Data: resource.ToAccountSiteResource(data)}))
+
 	return nil
 }
 

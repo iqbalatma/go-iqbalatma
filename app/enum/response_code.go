@@ -40,6 +40,7 @@ var responseCodeHTTPStatus = map[ResponseCode]int{
 	ERR_ACTION_UNAUTHORIZED: http.StatusUnauthorized,
 	ERR_AUTHENTICATION:      http.StatusUnauthorized,
 	ERR_INVALID_ACTION:      http.StatusForbidden,
+	ERR_BAD_REQUEST:         http.StatusBadRequest,
 }
 
 func (r ResponseCode) HTTPStatus() int {

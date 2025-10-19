@@ -1,17 +1,22 @@
 package repository
 
 import (
-	"iqbalatma/go-iqbalatma/app/interface/repository"
 	"iqbalatma/go-iqbalatma/app/model"
 	"iqbalatma/go-iqbalatma/config"
 
 	"github.com/gin-gonic/gin"
 )
 
-type AccountSiteRepository struct {
+type AccountSiteRepository interface {
+	GetAllData(c *gin.Context) ([]model.AccountSite, error)
+	GetDataById(c *gin.Context, id string) (*model.AccountSite, error)
+	AddNewData(c *gin.Context, accountSite *model.AccountSite) (*model.AccountSite, error)
 }
 
-func (this AccountSiteRepository) GetAllData(c *gin.Context) ([]model.AccountSite, error) {
+type AccountSiteRepositoryImp struct {
+}
+
+func (this AccountSiteRepositoryImp) GetAllData(c *gin.Context) ([]model.AccountSite, error) {
 	var accountSites []model.AccountSite
 	err := config.DB.Find(&accountSites).Error
 	if err != nil {
@@ -21,7 +26,7 @@ func (this AccountSiteRepository) GetAllData(c *gin.Context) ([]model.AccountSit
 	return accountSites, nil
 }
 
-func (this AccountSiteRepository) GetDataById(c *gin.Context, id string) (*model.AccountSite, error) {
+func (this AccountSiteRepositoryImp) GetDataById(c *gin.Context, id string) (*model.AccountSite, error) {
 	var accountSite model.AccountSite
 
 	err := config.DB.Where("id = ?", id).First(&accountSite).Error
@@ -32,6 +37,15 @@ func (this AccountSiteRepository) GetDataById(c *gin.Context, id string) (*model
 	return &accountSite, nil
 }
 
-func NewAccountSiteRepository() repository.AccountSiteRepository {
-	return &AccountSiteRepository{}
+func (this AccountSiteRepositoryImp) AddNewData(c *gin.Context, accountSite *model.AccountSite) (*model.AccountSite, error) {
+	err := config.DB.Create(&accountSite).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return accountSite, nil
+}
+
+func NewAccountSiteRepository() AccountSiteRepository {
+	return &AccountSiteRepositoryImp{}
 }

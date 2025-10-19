@@ -14,21 +14,21 @@ func newError(code enum.ResponseCode, defaultMessage string, messages ...string)
 	return utils.NewHttpError(message, code)
 }
 func InvalidAction(messages ...string) *utils.HTTPError {
-	return newError(enum.ERR_INVALID_ACTION, "Invalid action")
+	return newError(enum.ERR_INVALID_ACTION, "Invalid action", messages...)
 }
 
 func QueryParameterInvalid(messages ...string) *utils.HTTPError {
-	return newError(enum.ERR_INVALID_QUERY_PARAMETER, "Invalid query parameter")
+	return newError(enum.ERR_INVALID_QUERY_PARAMETER, "Invalid query parameter", messages...)
 }
 
 func InvalidTokenTypeException(messages ...string) *utils.HTTPError {
-	return newError(enum.ERR_AUTHENTICATION, "Invalid token type")
+	return newError(enum.ERR_AUTHENTICATION, "Invalid token type", messages...)
 }
 
 func InternalServerError(messages ...string) *utils.HTTPError {
-	return newError(enum.ERR_INTERNAL_SERVER_ERROR, "Internal server error")
+	return newError(enum.ERR_INTERNAL_SERVER_ERROR, "Internal server error", messages...)
 }
 
 func UnauthorizedException(messages ...string) *utils.HTTPError {
-	return newError(enum.ERR_ACTION_UNAUTHORIZED, "Unauthorized")
+	return newError(enum.ERR_ACTION_UNAUTHORIZED, "Unauthorized", messages...)
 }

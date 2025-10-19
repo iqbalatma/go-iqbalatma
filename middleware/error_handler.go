@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 	"fmt"
+	"io"
 	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/config"
 	"iqbalatma/go-iqbalatma/utils"
@@ -23,6 +24,15 @@ func ErrorHandler() gin.HandlerFunc {
 
 			logError(c, originalErr)
 			fmt.Printf("Error type: %T\n", originalErr)
+
+			if errors.Is(originalErr, io.EOF) {
+				c.AbortWithStatusJSON(http.StatusBadRequest, utils.NewHttpError(
+					"Empty request body",
+					enum.ERR_BAD_REQUEST,
+				))
+				return
+			}
+
 			if errors.Is(originalErr, gorm.ErrRecordNotFound) {
 				c.AbortWithStatusJSON(http.StatusNotFound, utils.NewHttpError("Data not found", enum.ERR_NOT_FOUND))
 				return

@@ -1,7 +1,6 @@
 package auth
 
 import (
-	repository2 "iqbalatma/go-iqbalatma/app/interface/repository"
 	"iqbalatma/go-iqbalatma/app/interface/service"
 	"iqbalatma/go-iqbalatma/app/model"
 	"iqbalatma/go-iqbalatma/app/repository"
@@ -9,15 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AuthService struct {
-	UserRepository repository2.UserRepository
+type AuthService interface {
+	Authenticate(c *gin.Context) (*model.User, error)
+}
+
+type AuthServiceImp struct {
+	UserRepository repository.UserRepository
 }
 type AuthenticateRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
-func (a *AuthService) Authenticate(c *gin.Context) (*model.User, error) {
+func (a *AuthServiceImp) Authenticate(c *gin.Context) (*model.User, error) {
 	var request AuthenticateRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
 		return nil, err
@@ -32,7 +35,7 @@ func (a *AuthService) Authenticate(c *gin.Context) (*model.User, error) {
 }
 
 func NewAuthService() service.AuthService {
-	return &AuthService{
+	return &AuthServiceImp{
 		UserRepository: repository.NewUserRepository(),
 	}
 }

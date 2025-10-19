@@ -62,6 +62,7 @@ func RegisterRoute(router *gin.Engine) {
 			accountSites := accountRoute.Group("/account-sites")
 			accountSites.GET("/", ErrorHandleWrapper(accountSiteController.Index))
 			accountSites.GET("/:id", ErrorHandleWrapper(accountSiteController.Show))
+			accountSites.POST("/", ErrorHandleWrapper(accountSiteController.Store))
 		}
 	}
 

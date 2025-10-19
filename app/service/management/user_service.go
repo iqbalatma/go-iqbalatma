@@ -1,7 +1,6 @@
 package management
 
 import (
-	repository2 "iqbalatma/go-iqbalatma/app/interface/repository"
 	"iqbalatma/go-iqbalatma/app/interface/service"
 	"iqbalatma/go-iqbalatma/app/repository"
 	"iqbalatma/go-iqbalatma/utils"
@@ -10,7 +9,7 @@ import (
 )
 
 type UserService struct {
-	UserRepository repository2.UserRepository
+	UserRepository repository.UserRepository
 }
 
 func (service *UserService) GetAllPaginated(c *gin.Context) (*utils.Payload, error) {
