@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
+	config2 "github.com/iqbalatma/gofortify/config"
 	"iqbalatma/go-iqbalatma/app/enum"
 	"iqbalatma/go-iqbalatma/cmd"
 	"iqbalatma/go-iqbalatma/config"
 	"iqbalatma/go-iqbalatma/middleware"
 	"iqbalatma/go-iqbalatma/route"
 	"os"
-
-	config2 "github.com/iqbalatma/gofortress/config"
 
 	"github.com/gin-gonic/gin"
 )

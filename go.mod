@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/google/uuid v1.6.0
-	github.com/iqbalatma/gofortress v0.0.0-00010101000000-000000000000
+	github.com/iqbalatma/gofortify v0.0.0-20251017102149-96994c9b2a12
 	github.com/jaswdr/faker v1.19.1
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.3
@@ -50,4 +50,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/iqbalatma/gofortress => ../gofortress

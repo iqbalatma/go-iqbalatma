@@ -1,6 +1,7 @@
 package route
 
 import (
+	"iqbalatma/go-iqbalatma/app/controller/account"
 	"iqbalatma/go-iqbalatma/app/controller/auth"
 	"iqbalatma/go-iqbalatma/app/controller/management"
 	"iqbalatma/go-iqbalatma/middleware"
@@ -44,6 +45,15 @@ func RegisterRoute(router *gin.Engine) {
 			users.POST("/", ErrorHandleWrapper(userController.Store))
 			users.PATCH("/:id", ErrorHandleWrapper(userController.Update))
 			users.DELETE("/:id", ErrorHandleWrapper(userController.Destroy))
+		}
+	}
+
+	{
+		accountRoute := authenticatedRoute.Group("/account")
+		{
+			accountSiteController := account.NewAccountSiteController()
+			accountSites := accountRoute.Group("/account-sites")
+			accountSites.GET("/", ErrorHandleWrapper(accountSiteController.Index))
 		}
 	}
 

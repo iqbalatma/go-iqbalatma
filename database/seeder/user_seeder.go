@@ -28,12 +28,16 @@ func UserSeeder() {
 	}
 
 	fake := faker.New()
+	hashedPassword, _ := utils.MakeHash(fake.Internet().Password())
+	
 	for i := 0; i < 100; i++ {
-		hashedPassword, _ := utils.MakeHash(fake.Internet().Password())
+		email := fake.Internet().Email()
+		fmt.Printf("%d Create users for email : %s", i+1, email)
+
 		user := model.User{
 			FirstName: fake.Person().FirstName(),
 			LastName:  fake.Person().LastName(),
-			Email:     fake.Internet().Email(),
+			Email:     email,
 			Password:  hashedPassword,
 		}
 		config.DB.Create(&user)

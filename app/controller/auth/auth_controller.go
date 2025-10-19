@@ -7,7 +7,7 @@ import (
 	"iqbalatma/go-iqbalatma/utils"
 	"net/http"
 
-	"github.com/iqbalatma/gofortress"
+	"github.com/iqbalatma/gofortify"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,15 +22,15 @@ func (this AuthController) Authenticate(c *gin.Context) error {
 		return err
 	}
 
-	accessToken, atv, err := gofortress.Encode(user,
-		gofortress.AccessToken,
+	accessToken, atv, err := gofortify.Encode(user,
+		gofortify.AccessToken,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
 	)
 
-	refreshToken, _, err := gofortress.Encode(user,
-		gofortress.RefreshToken,
+	refreshToken, _, err := gofortify.Encode(user,
+		gofortify.RefreshToken,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
@@ -74,7 +74,7 @@ func (this AuthController) Authenticate(c *gin.Context) error {
 
 func (this AuthController) Logout(c *gin.Context) error {
 	var accessToken string = c.GetHeader("Authorization")
-	_, err := gofortress.Revoke(
+	_, err := gofortify.Revoke(
 		&accessToken,
 	)
 
@@ -90,7 +90,7 @@ func (this AuthController) Logout(c *gin.Context) error {
 func (this AuthController) Refresh(c *gin.Context) error {
 	refreshToken, _ := c.Cookie("refresh_token")
 
-	_, err := gofortress.Revoke(
+	_, err := gofortify.Revoke(
 		&refreshToken,
 	)
 
@@ -110,15 +110,15 @@ func (this AuthController) Refresh(c *gin.Context) error {
 		return nil
 	}
 
-	accessToken, atv, err := gofortress.Encode(user,
-		gofortress.AccessToken,
+	accessToken, atv, err := gofortify.Encode(user,
+		gofortify.AccessToken,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
 	)
 
-	refreshToken, _, err = gofortress.Encode(user,
-		gofortress.RefreshToken,
+	refreshToken, _, err = gofortify.Encode(user,
+		gofortify.RefreshToken,
 		true,
 		"localhost",
 		c.Request.UserAgent(),
